@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>美股交易时间监控 | 北京时间盘前盘中盘后倒计时</title>
+  <meta name="description" content="实时监控美股夏令时交易时间，按北京时间显示盘前、盘中、盘后、周末休市和 2026 年美股节假日休市状态，适合美股、Web3、链上资产套利与对冲交易者使用。">
+  <meta name="keywords" content="美股交易时间,美股开盘时间,美股盘前时间,美股盘后时间,美股休市,北京时间美股,美股倒计时,NYSE trading hours,NASDAQ trading hours,US market clock">
+  <meta name="author" content="US Market Clock">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0b0f19">
+  <link rel="canonical" href="https://gupiao.94shengqian.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="US Market Clock">
+  <meta property="og:title" content="美股交易时间监控 | 北京时间盘前盘中盘后倒计时">
+  <meta property="og:description" content="按北京时间实时显示美股盘前、盘中、盘后、周末和节假日休市状态，内置 2026 年主要美股休市日。">
+  <meta property="og:url" content="https://gupiao.94shengqian.com/">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="美股交易时间监控 | 北京时间盘前盘中盘后倒计时">
+  <meta name="twitter:description" content="实时监控美股夏令时交易窗口，适合美股、Web3、链上资产套利与对冲交易者。">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "US Market Clock",
+      "alternateName": "美股交易时间监控",
+      "url": "https://gupiao.94shengqian.com/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "zh-CN",
+      "description": "实时监控美股夏令时交易时间，按北京时间显示盘前、盘中、盘后、周末休市和 2026 年美股节假日休市状态。",
+      "featureList": [
+        "美股盘前交易倒计时",
+        "美股盘中交易倒计时",
+        "美股盘后交易倒计时",
+        "2026 年美股休市日识别",
+        "北京时间交易状态监控"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f19;
+      --panel: rgba(15, 23, 42, 0.76);
+      --panel-strong: rgba(17, 24, 39, 0.92);
+      --line: rgba(148, 163, 184, 0.17);
+      --line-hot: rgba(45, 212, 191, 0.62);
+      --text: #e5eefc;
+      --muted: #8ea0bd;
+      --soft: #53627c;
+      --green: #34d399;
+      --teal: #2dd4bf;
+      --blue: #60a5fa;
+      --amber: #fbbf24;
+      --red: #fb7185;
+      --violet: #a78bfa;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(45, 212, 191, 0.14), transparent 32rem),
+        radial-gradient(circle at 88% 4%, rgba(96, 165, 250, 0.14), transparent 30rem),
+        linear-gradient(180deg, #07111f 0%, #0b0f19 44%, #060914 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(45, 212, 191, 0.32);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(45, 212, 191, 0.22), rgba(59, 130, 246, 0.16)),
+        rgba(15, 23, 42, 0.9);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 24px rgba(45, 212, 191, 0.15);
+      flex: 0 0 auto;
+    }
+
+    .mark svg { width: 23px; height: 23px; color: var(--teal); }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(20px, 3.2vw, 34px);
+      line-height: 1.05;
+      font-weight: 780;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clock-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      min-width: 170px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(15, 23, 42, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .clock-chip span:first-child {
+      color: var(--soft);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .clock-chip span:last-child {
+      color: #dce8fa;
+      font-variant-numeric: tabular-nums;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: clamp(20px, 5vw, 42px);
+      min-height: 330px;
+      background:
+        linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(2, 6, 23, 0.88)),
+        var(--panel-strong);
+      box-shadow: var(--shadow);
+      transition: border-color 360ms ease, box-shadow 360ms ease, background 360ms ease;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      inset: auto;
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .hero::before {
+      width: 52%;
+      height: 72%;
+      right: -12%;
+      top: -22%;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.26), transparent 68%);
+      filter: blur(8px);
+      opacity: 0.3;
+    }
+
+    .hero::after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.76), transparent);
+      opacity: 0.5;
+    }
+
+    .hero.open {
+      border-color: rgba(45, 212, 191, 0.42);
+      background:
+        linear-gradient(135deg, rgba(5, 46, 38, 0.92), rgba(15, 23, 42, 0.94) 48%, rgba(8, 47, 73, 0.9)),
+        var(--panel-strong);
+      box-shadow: 0 30px 90px rgba(20, 184, 166, 0.16), var(--shadow);
+      animation: marketPulse 3.8s ease-in-out infinite;
+    }
+
+    .hero.closed {
+      border-color: rgba(251, 113, 133, 0.28);
+      background:
+        linear-gradient(135deg, rgba(76, 29, 58, 0.78), rgba(17, 24, 39, 0.96) 48%, rgba(49, 46, 129, 0.72)),
+        var(--panel-strong);
+      box-shadow: 0 28px 80px rgba(190, 24, 93, 0.13), var(--shadow);
+    }
+
+    @keyframes marketPulse {
+      0%, 100% { box-shadow: 0 28px 80px rgba(20, 184, 166, 0.12), var(--shadow); }
+      50% { box-shadow: 0 28px 96px rgba(45, 212, 191, 0.24), var(--shadow); }
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 999px;
+      padding: 8px 11px;
+      color: #cbd5e1;
+      background: rgba(2, 6, 23, 0.32);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 14px rgba(251, 113, 133, 0.64);
+    }
+
+    .hero.open .dot {
+      background: var(--green);
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.78);
+      animation: dotPulse 1.7s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      50% { transform: scale(1.25); opacity: 0.72; }
+    }
+
+    .label {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .headline {
+      margin: 0;
+      font-size: clamp(28px, 7vw, 76px);
+      line-height: 0.98;
+      font-variant-numeric: tabular-nums;
+      font-weight: 850;
+      color: #f8fbff;
+      text-shadow: 0 0 26px rgba(96, 165, 250, 0.16);
+      overflow-wrap: anywhere;
+    }
+
+    .hero.closed .headline {
+      color: #ffe6ea;
+      text-shadow: 0 0 28px rgba(251, 113, 133, 0.22);
+    }
+
+    .assist {
+      margin: 18px 0 0;
+      color: #b8c7dd;
+      font-size: clamp(14px, 2vw, 17px);
+      line-height: 1.7;
+    }
+
+    .side-panel {
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.58), rgba(2, 6, 23, 0.34));
+      display: grid;
+      align-content: space-between;
+      gap: 20px;
+      min-height: 230px;
+    }
+
+    .metric {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .metric:last-child { border-bottom: 0; padding-bottom: 0; }
+
+    .metric small {
+      color: var(--soft);
+      font-size: 12px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      color: #eaf2ff;
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .metric .value {
+      color: var(--teal);
+      text-align: right;
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .section-head {
+      margin: 34px 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .session-card {
+      position: relative;
+      min-height: 210px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius);
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(30, 41, 59, 0.58), rgba(15, 23, 42, 0.72)),
+        rgba(15, 23, 42, 0.72);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+      transition: transform 360ms ease, border-color 360ms ease, box-shadow 360ms ease, background 360ms ease;
+      scroll-margin: 28vh;
+    }
+
+    .session-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      bottom: 16px;
+      width: 3px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.22);
+      transition: background 360ms ease, box-shadow 360ms ease;
+    }
+
+    .session-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 88% 8%, rgba(45, 212, 191, 0.13), transparent 42%);
+      opacity: 0;
+      transition: opacity 360ms ease;
+      pointer-events: none;
+    }
+
+    .session-card.active {
+      transform: translateY(-5px);
+      border-color: var(--line-hot);
+      background:
+        linear-gradient(180deg, rgba(13, 148, 136, 0.19), rgba(15, 23, 42, 0.82)),
+        rgba(15, 23, 42, 0.82);
+      box-shadow: 0 22px 70px rgba(45, 212, 191, 0.14), 0 18px 48px rgba(0,0,0,0.28);
+    }
+
+    .session-card.active::before {
+      background: linear-gradient(180deg, var(--green), var(--blue));
+      box-shadow: 0 0 18px rgba(45, 212, 191, 0.86);
+    }
+
+    .session-card.active::after { opacity: 1; }
+
+    .session-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .session-icon {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      background: rgba(2, 6, 23, 0.28);
+      color: var(--blue);
+      flex: 0 0 auto;
+    }
+
+    .session-card.active .session-icon {
+      color: var(--teal);
+      border-color: rgba(45, 212, 191, 0.36);
+      background: rgba(20, 184, 166, 0.10);
+    }
+
+    .session-icon svg { width: 21px; height: 21px; }
+
+    .pill {
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .session-card.active .pill { color: var(--green); }
+
+    .session-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+      font-weight: 810;
+    }
+
+    .session-card.active .session-title { color: #c9fff3; }
+
+    .session-time {
+      position: relative;
+      z-index: 1;
+      margin: 9px 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .mini-label {
+      color: var(--soft);
+      font-size: 12px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .session-count {
+      color: #dbeafe;
+      font-weight: 800;
+      font-size: 17px;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .session-card.active .session-count {
+      color: var(--green);
+      text-shadow: 0 0 16px rgba(52, 211, 153, 0.26);
+    }
+
+    .holiday-box {
+      margin-top: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.13);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.45);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .holiday-box strong { color: #dbeafe; }
+
+    @media (max-width: 840px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .clock-chip {
+        align-items: flex-start;
+        width: 100%;
+      }
+
+      .hero-grid,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hint { text-align: left; }
+    }
+
+    @media (max-width: 460px) {
+      .shell {
+        width: min(100% - 20px, 1120px);
+        padding-top: 18px;
+      }
+
+      .hero { padding: 18px; }
+      .session-bottom { align-items: flex-start; flex-direction: column; }
+      .session-count { text-align: left; }
+      .subtitle { white-space: normal; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar" id="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 18V8"></path><path d="M9 18V5"></path><path d="M14 18v-8"></path><path d="M19 18V7"></path><path d="M3 18h18"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>US Market Clock</h1>
+          <p class="subtitle">美股夏令时交易窗口监控 · 北京时间 · 2026 休市日内置</p>
+        </div>
+      </div>
+      <div class="clock-chip" aria-live="polite">
+        <span>Beijing Time</span>
+        <span id="nowText">--:--:--</span>
+      </div>
+    </header>
+
+    <section class="hero closed" id="hero" aria-live="polite">
+      <div class="hero-grid">
+        <div>
+          <div class="status-row">
+            <span class="badge"><span class="dot"></span><span id="statusText">初始化</span></span>
+            <span class="badge" id="phaseBadge">SYNCING</span>
+          </div>
+          <p class="label" id="mainLabel">正在校准交易时钟</p>
+          <p class="headline" id="mainCountdown">--:--:--</p>
+          <p class="assist" id="assistText">系统会自动识别盘前、盘中、盘后、周末与 2026 年主要休市节日。</p>
+        </div>
+
+        <aside class="side-panel">
+          <div class="metric">
+            <div>
+              <small>当前交易日</small>
+              <strong id="tradingDateText">--</strong>
+            </div>
+            <div class="value" id="holidayText">--</div>
+          </div>
+          <div class="metric">
+            <div>
+              <small>下一可交易窗口</small>
+              <strong id="nextOpenText">--</strong>
+            </div>
+            <div class="value">PRE</div>
+          </div>
+          <div class="metric">
+            <div>
+              <small>当前阶段结束</small>
+              <strong id="phaseEndText">--</strong>
+            </div>
+            <div class="value" id="phaseRemainText">--</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div>
+        <h2>交易时段</h2>
+        <p class="subtitle">卡片会随实时状态自动高亮并滚动聚焦</p>
+      </div>
+      <div class="hint" id="scrollHint">休市时聚焦顶部状态栏</div>
+    </div>
+
+    <section class="timeline" id="timeline">
+      <article class="session-card" id="card-pre" data-session="pre">
+        <div class="session-top">
+          <div class="session-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v2"></path><path d="M5.6 5.6 7 7"></path><path d="M3 12h2"></path><path d="M19 12h2"></path><path d="m17 7 1.4-1.4"></path><path d="M7 18a5 5 0 0 1 10 0"></path><path d="M4 21h16"></path>
+            </svg>
+          </div>
+          <span class="pill" id="pill-pre">PRE-MARKET</span>
+        </div>
+        <h3 class="session-title">盘前交易</h3>
+        <p class="session-time">16:00 - 21:30</p>
+        <div class="session-bottom">
+          <div><span class="mini-label">状态</span><strong id="state-pre">待开启</strong></div>
+          <div class="session-count" id="count-pre">--:--:--</div>
+        </div>
+      </article>
+
+      <article class="session-card" id="card-regular" data-session="regular">
+        <div class="session-top">
+          <div class="session-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-4 3 2 4-7"></path><path d="M17 6h3v3"></path>
+            </svg>
+          </div>
+          <span class="pill" id="pill-regular">REGULAR</span>
+        </div>
+        <h3 class="session-title">盘中主力</h3>
+        <p class="session-time">21:30 - 次日 04:00</p>
+        <div class="session-bottom">
+          <div><span class="mini-label">状态</span><strong id="state-regular">待开启</strong></div>
+          <div class="session-count" id="count-regular">--:--:--</div>
+        </div>
+      </article>
+
+      <article class="session-card" id="card-after" data-session="after">
+        <div class="session-top">
+          <div class="session-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 7.4A8 8 0 1 1 12 3Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path>
+            </svg>
+          </div>
+          <span class="pill" id="pill-after">AFTER-HOURS</span>
+        </div>
+        <h3 class="session-title">盘后交易</h3>
+        <p class="session-time">次日 04:00 - 08:00</p>
+        <div class="session-bottom">
+          <div><span class="mini-label">状态</span><strong id="state-after">待开启</strong></div>
+          <div class="session-count" id="count-after">--:--:--</div>
+        </div>
+      </article>
+    </section>
+
+    <div class="holiday-box">
+      <strong>2026 内置休市日：</strong>
+      01/01 元旦、01/19 马丁·路德·金纪念日、02/16 华盛顿诞辰日、04/03 耶稣受难日、05/25 阵亡将士纪念日、06/19 六月节、07/03 独立日补休、09/07 劳动节、11/26 感恩节、12/25 圣诞节。
+    </div>
+  </main>
+
+  <script>
+    const TZ = "Asia/Shanghai";
+    const HOLIDAYS_2026 = new Map([
+      ["2026-01-01", "元旦"],
+      ["2026-01-19", "马丁·路德·金纪念日"],
+      ["2026-02-16", "华盛顿诞辰日"],
+      ["2026-04-03", "耶稣受难日"],
+      ["2026-05-25", "阵亡将士纪念日"],
+      ["2026-06-19", "六月节"],
+      ["2026-07-03", "独立日补休"],
+      ["2026-09-07", "劳动节"],
+      ["2026-11-26", "感恩节"],
+      ["2026-12-25", "圣诞节"]
+    ]);
+
+    const SESSIONS = [
+      { id: "pre", name: "盘前交易", short: "PRE", start: [16, 0], end: [21, 30], endOffset: 0 },
+      { id: "regular", name: "盘中主力", short: "REG", start: [21, 30], end: [4, 0], endOffset: 1 },
+      { id: "after", name: "盘后交易", short: "AFT", start: [4, 0], startOffset: 1, end: [8, 0], endOffset: 1 }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const elements = {
+      hero: $("hero"),
+      nowText: $("nowText"),
+      statusText: $("statusText"),
+      phaseBadge: $("phaseBadge"),
+      mainLabel: $("mainLabel"),
+      mainCountdown: $("mainCountdown"),
+      assistText: $("assistText"),
+      tradingDateText: $("tradingDateText"),
+      holidayText: $("holidayText"),
+      nextOpenText: $("nextOpenText"),
+      phaseEndText: $("phaseEndText"),
+      phaseRemainText: $("phaseRemainText"),
+      scrollHint: $("scrollHint")
+    };
+
+    let lastFocus = "";
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function keyFromParts(y, m, d) {
+      return `${y}-${pad(m)}-${pad(d)}`;
+    }
+
+    function dateFromKey(key) {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+    }
+
+    function makeBjDate(key, hour = 0, minute = 0, offsetDays = 0) {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(Date.UTC(y, m - 1, d + offsetDays, hour - 8, minute, 0));
+    }
+
+    function bjParts(date = new Date()) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+        weekday: "short"
+      }).formatToParts(date).reduce((acc, part) => {
+        if (part.type !== "literal") acc[part.type] = part.value;
+        return acc;
+      }, {});
+      return {
+        y: Number(parts.year),
+        m: Number(parts.month),
+        d: Number(parts.day),
+        h: Number(parts.hour),
+        min: Number(parts.minute),
+        sec: Number(parts.second),
+        weekday: parts.weekday,
+        key: `${parts.year}-${parts.month}-${parts.day}`
+      };
+    }
+
+    function dayName(date) {
+      return new Intl.DateTimeFormat("zh-CN", { timeZone: TZ, weekday: "short" }).format(date);
+    }
+
+    function shortDateTime(date) {
+      const p = bjParts(date);
+      return `${p.m}/${p.d} ${pad(p.h)}:${pad(p.min)} (${dayName(date)})`;
+    }
+
+    function timeText(date) {
+      const p = bjParts(date);
+      return `${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.min)}:${pad(p.sec)}`;
+    }
+
+    function addDaysKey(key, days) {
+      const date = dateFromKey(key);
+      date.setUTCDate(date.getUTCDate() + days);
+      return keyFromParts(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+    }
+
+    function weekdayIndex(key) {
+      return makeBjDate(key, 12).getUTCDay();
+    }
+
+    function isTradingDay(key) {
+      const day = weekdayIndex(key);
+      return day >= 1 && day <= 5 && !HOLIDAYS_2026.has(key);
+    }
+
+    function sessionRange(tradingKey, session) {
+      return {
+        start: makeBjDate(tradingKey, session.start[0], session.start[1], session.startOffset || 0),
+        end: makeBjDate(tradingKey, session.end[0], session.end[1], session.endOffset || 0)
+      };
+    }
+
+    function getTradingWindow(tradingKey) {
+      return SESSIONS.map((session) => ({ ...session, ...sessionRange(tradingKey, session), tradingKey }));
+    }
+
+    function findActive(now) {
+      const today = bjParts(now).key;
+      const candidates = [addDaysKey(today, -1), today];
+      for (const key of candidates) {
+        if (!isTradingDay(key)) continue;
+        for (const session of getTradingWindow(key)) {
+          if (now >= session.start && now < session.end) return session;
+        }
+      }
+      return null;
+    }
+
+    function nextTradingKey(fromDate) {
+      let key = bjParts(fromDate).key;
+      for (let i = 0; i < 370; i += 1) {
+        const open = makeBjDate(key, 16, 0);
+        if (isTradingDay(key) && open > fromDate) return key;
+        key = addDaysKey(key, 1);
+      }
+      return key;
+    }
+
+    function nextSessionStart(now, session) {
+      let key = bjParts(now).key;
+      for (let i = 0; i < 370; i += 1) {
+        if (isTradingDay(key)) {
+          const start = sessionRange(key, session).start;
+          if (start > now) return start;
+        }
+        key = addDaysKey(key, 1);
+      }
+      return null;
+    }
+
+    function formatDuration(ms, compact = false) {
+      const total = Math.max(0, Math.floor(ms / 1000));
+      const days = Math.floor(total / 86400);
+      const hours = Math.floor((total % 86400) / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const seconds = total % 60;
+      const hms = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      if (compact) return days > 0 ? `${days}天 ${hms}` : hms;
+      return days > 0 ? `${days}天 ${hms}` : hms;
+    }
+
+    function marketReason(now) {
+      const parts = bjParts(now);
+      const todayHoliday = HOLIDAYS_2026.get(parts.key);
+      const yesterday = addDaysKey(parts.key, -1);
+      const afterHoliday = parts.h < 8 ? HOLIDAYS_2026.get(yesterday) : "";
+      const day = weekdayIndex(parts.key);
+      if (todayHoliday) return `今日休市：${todayHoliday}`;
+      if (afterHoliday) return `延续休市：${afterHoliday}`;
+      if (day === 0 || (day === 6 && parts.h >= 8)) return "周末休市";
+      if (day === 6 && parts.h < 8) return "周五盘后已结束";
+      return "等待下一次盘前开启";
+    }
+
+    function setFocus(targetId) {
+      if (lastFocus === targetId) return;
+      lastFocus = targetId;
+      window.setTimeout(() => {
+        const el = $(targetId);
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: targetId === "top" ? "start" : "center" });
+      }, 80);
+    }
+
+    function updateCards(now, active) {
+      for (const session of SESSIONS) {
+        const card = $(`card-${session.id}`);
+        const state = $(`state-${session.id}`);
+        const count = $(`count-${session.id}`);
+        const isActive = active && active.id === session.id;
+        card.classList.toggle("active", Boolean(isActive));
+
+        if (isActive) {
+          state.textContent = "进行中";
+          count.textContent = `剩 ${formatDuration(active.end - now, true)}`;
+          continue;
+        }
+
+        const start = nextSessionStart(now, session);
+        if (start) {
+          state.textContent = start > now ? "待开启" : "已结束";
+          count.textContent = `开 ${formatDuration(start - now, true)}`;
+        } else {
+          state.textContent = "待开启";
+          count.textContent = "--:--:--";
+        }
+      }
+    }
+
+    function update() {
+      const now = new Date();
+      const active = findActive(now);
+      const nextKey = nextTradingKey(now);
+      const nextOpen = makeBjDate(nextKey, 16, 0);
+      const currentKey = active ? active.tradingKey : bjParts(now).key;
+      const holidayName = HOLIDAYS_2026.get(currentKey) || HOLIDAYS_2026.get(bjParts(now).key);
+
+      elements.nowText.textContent = timeText(now);
+      elements.tradingDateText.textContent = active ? `${active.tradingKey} · ${dayName(makeBjDate(active.tradingKey, 12))}` : `${bjParts(now).key} · ${dayName(now)}`;
+      elements.holidayText.textContent = holidayName ? `休市 · ${holidayName}` : "正常";
+      elements.nextOpenText.textContent = shortDateTime(nextOpen);
+
+      if (active) {
+        elements.hero.classList.add("open");
+        elements.hero.classList.remove("closed");
+        elements.statusText.textContent = "交易中";
+        elements.phaseBadge.textContent = active.short;
+        elements.mainLabel.textContent = `${active.name}正在进行，距离当前时段结束`;
+        elements.mainCountdown.textContent = formatDuration(active.end - now);
+        elements.assistText.textContent = `${active.name}将在北京时间 ${shortDateTime(active.end)} 结束；页面已自动聚焦当前交易卡片。`;
+        elements.phaseEndText.textContent = shortDateTime(active.end);
+        elements.phaseRemainText.textContent = formatDuration(active.end - now, true);
+        elements.scrollHint.textContent = `当前聚焦：${active.name}`;
+        setFocus(`card-${active.id}`);
+      } else {
+        const reason = marketReason(now);
+        elements.hero.classList.add("closed");
+        elements.hero.classList.remove("open");
+        elements.statusText.textContent = reason.includes("等待") ? "等待开盘" : "休市中";
+        elements.phaseBadge.textContent = "CLOSED";
+        elements.mainLabel.textContent = "距离下一次真正可以交易";
+        elements.mainCountdown.textContent = formatDuration(nextOpen - now);
+        elements.assistText.textContent = `${reason}。下一次盘前交易将在北京时间 ${shortDateTime(nextOpen)} 开启。`;
+        elements.phaseEndText.textContent = "--";
+        elements.phaseRemainText.textContent = "--";
+        elements.scrollHint.textContent = "休市或等待开盘时聚焦顶部状态栏";
+        setFocus("top");
+      }
+
+      updateCards(now, active);
+    }
+
+    update();
+    window.setInterval(update, 1000);
+  </script>
+</body>
+</html>

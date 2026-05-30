@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gupiao.94shengqian.com/sitemap.xml

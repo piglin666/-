@@ -1,0 +1,7 @@
+services:
+  us-market-clock:
+    build: .
+    container_name: us-market-clock
+    ports:
+      - "8088:80"
+    restart: unless-stopped
