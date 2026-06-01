@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>美股交易时间监控 | 北京时间盘前盘中盘后倒计时</title>
   <meta name="description" content="实时监控美股夏令时交易时间，按北京时间显示盘前、盘中、盘后、周末休市和 2026 年美股节假日休市状态，适合美股、Web3、链上资产套利与对冲交易者使用。">
-  <meta name="keywords" content="美股交易时间,美股开盘时间,美股盘前时间,美股盘后时间,美股休市,北京时间美股,美股倒计时,NYSE trading hours,NASDAQ trading hours,US market clock">
-  <meta name="author" content="US Market Clock">
+  <meta name="keywords" content="美股交易时间,美股开盘时间,美股盘前时间,美股盘后时间,美股休市,北京时间美股,美股倒计时,美股交易时钟,美股夏令时,纳斯达克交易时间,纽约证券交易所交易时间">
+  <meta name="author" content="美股交易时钟">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="theme-color" content="#0b0f19">
   <link rel="canonical" href="https://gupiao.94shengqian.com/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="US Market Clock">
+  <meta property="og:site_name" content="美股交易时钟">
   <meta property="og:title" content="美股交易时间监控 | 北京时间盘前盘中盘后倒计时">
   <meta property="og:description" content="按北京时间实时显示美股盘前、盘中、盘后、周末和节假日休市状态，内置 2026 年主要美股休市日。">
   <meta property="og:url" content="https://gupiao.94shengqian.com/">
@@ -23,11 +23,11 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "US Market Clock",
+      "name": "美股交易时钟",
       "alternateName": "美股交易时间监控",
       "url": "https://gupiao.94shengqian.com/",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Any",
+      "applicationCategory": "金融工具",
+      "operatingSystem": "任意系统",
       "inLanguage": "zh-CN",
       "description": "实时监控美股夏令时交易时间，按北京时间显示盘前、盘中、盘后、周末休市和 2026 年美股节假日休市状态。",
       "featureList": [
@@ -152,11 +152,10 @@
     }
 
     .clock-chip {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 3px;
-      min-width: 170px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      min-width: 250px;
       padding: 10px 12px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -164,17 +163,31 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    .clock-chip span:first-child {
-      color: var(--soft);
-      font-size: 11px;
-      text-transform: uppercase;
+    .time-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
     }
 
-    .clock-chip span:last-child {
+    .time-line + .time-line {
+      padding-top: 8px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .time-line span:first-child {
+      color: var(--soft);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .time-line span:last-child {
       color: #dce8fa;
       font-variant-numeric: tabular-nums;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
     }
 
     .hero {
@@ -552,10 +565,7 @@
         flex-direction: column;
       }
 
-      .clock-chip {
-        align-items: flex-start;
-        width: 100%;
-      }
+      .clock-chip { width: 100%; }
 
       .hero-grid,
       .timeline {
@@ -601,13 +611,19 @@
           </svg>
         </div>
         <div>
-          <h1>US Market Clock</h1>
+          <h1>美股交易时钟</h1>
           <p class="subtitle">美股夏令时交易窗口监控 · 北京时间 · 2026 休市日内置</p>
         </div>
       </div>
       <div class="clock-chip" aria-live="polite">
-        <span>Beijing Time</span>
-        <span id="nowText">--:--:--</span>
+        <div class="time-line">
+          <span>北京时间</span>
+          <span id="nowText">--:--:--</span>
+        </div>
+        <div class="time-line">
+          <span>美国东部时间</span>
+          <span id="usNowText">--:--:--</span>
+        </div>
       </div>
     </header>
 
@@ -616,7 +632,7 @@
         <div>
           <div class="status-row">
             <span class="badge"><span class="dot"></span><span id="statusText">初始化</span></span>
-            <span class="badge" id="phaseBadge">SYNCING</span>
+            <span class="badge" id="phaseBadge">同步中</span>
           </div>
           <p class="label" id="mainLabel">正在校准交易时钟</p>
           <p class="headline" id="mainCountdown">--:--:--</p>
@@ -636,7 +652,7 @@
               <small>下一可交易窗口</small>
               <strong id="nextOpenText">--</strong>
             </div>
-            <div class="value">PRE</div>
+            <div class="value">盘前</div>
           </div>
           <div class="metric">
             <div>
@@ -665,7 +681,7 @@
               <path d="M12 3v2"></path><path d="M5.6 5.6 7 7"></path><path d="M3 12h2"></path><path d="M19 12h2"></path><path d="m17 7 1.4-1.4"></path><path d="M7 18a5 5 0 0 1 10 0"></path><path d="M4 21h16"></path>
             </svg>
           </div>
-          <span class="pill" id="pill-pre">PRE-MARKET</span>
+          <span class="pill" id="pill-pre">盘前交易</span>
         </div>
         <h3 class="session-title">盘前交易</h3>
         <p class="session-time">16:00 - 21:30</p>
@@ -682,7 +698,7 @@
               <path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-4 3 2 4-7"></path><path d="M17 6h3v3"></path>
             </svg>
           </div>
-          <span class="pill" id="pill-regular">REGULAR</span>
+          <span class="pill" id="pill-regular">盘中主力</span>
         </div>
         <h3 class="session-title">盘中主力</h3>
         <p class="session-time">21:30 - 次日 04:00</p>
@@ -699,7 +715,7 @@
               <path d="M12 3a6 6 0 0 0 9 7.4A8 8 0 1 1 12 3Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path>
             </svg>
           </div>
-          <span class="pill" id="pill-after">AFTER-HOURS</span>
+          <span class="pill" id="pill-after">盘后交易</span>
         </div>
         <h3 class="session-title">盘后交易</h3>
         <p class="session-time">次日 04:00 - 08:00</p>
@@ -732,15 +748,16 @@
     ]);
 
     const SESSIONS = [
-      { id: "pre", name: "盘前交易", short: "PRE", start: [16, 0], end: [21, 30], endOffset: 0 },
-      { id: "regular", name: "盘中主力", short: "REG", start: [21, 30], end: [4, 0], endOffset: 1 },
-      { id: "after", name: "盘后交易", short: "AFT", start: [4, 0], startOffset: 1, end: [8, 0], endOffset: 1 }
+      { id: "pre", name: "盘前交易", short: "盘前", start: [16, 0], end: [21, 30], endOffset: 0 },
+      { id: "regular", name: "盘中主力", short: "盘中", start: [21, 30], end: [4, 0], endOffset: 1 },
+      { id: "after", name: "盘后交易", short: "盘后", start: [4, 0], startOffset: 1, end: [8, 0], endOffset: 1 }
     ];
 
     const $ = (id) => document.getElementById(id);
     const elements = {
       hero: $("hero"),
       nowText: $("nowText"),
+      usNowText: $("usNowText"),
       statusText: $("statusText"),
       phaseBadge: $("phaseBadge"),
       mainLabel: $("mainLabel"),
@@ -813,6 +830,24 @@
     function timeText(date) {
       const p = bjParts(date);
       return `${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.min)}:${pad(p.sec)}`;
+    }
+
+    function usTimeText(date) {
+      const parts = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+        weekday: "short"
+      }).formatToParts(date).reduce((acc, part) => {
+        if (part.type !== "literal") acc[part.type] = part.value;
+        return acc;
+      }, {});
+      return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second} ${parts.weekday}`;
     }
 
     function addDaysKey(key, days) {
@@ -943,6 +978,7 @@
       const holidayName = HOLIDAYS_2026.get(currentKey) || HOLIDAYS_2026.get(bjParts(now).key);
 
       elements.nowText.textContent = timeText(now);
+      elements.usNowText.textContent = usTimeText(now);
       elements.tradingDateText.textContent = active ? `${active.tradingKey} · ${dayName(makeBjDate(active.tradingKey, 12))}` : `${bjParts(now).key} · ${dayName(now)}`;
       elements.holidayText.textContent = holidayName ? `休市 · ${holidayName}` : "正常";
       elements.nextOpenText.textContent = shortDateTime(nextOpen);
@@ -964,7 +1000,7 @@
         elements.hero.classList.add("closed");
         elements.hero.classList.remove("open");
         elements.statusText.textContent = reason.includes("等待") ? "等待开盘" : "休市中";
-        elements.phaseBadge.textContent = "CLOSED";
+        elements.phaseBadge.textContent = "休市";
         elements.mainLabel.textContent = "距离下一次真正可以交易";
         elements.mainCountdown.textContent = formatDuration(nextOpen - now);
         elements.assistText.textContent = `${reason}。下一次盘前交易将在北京时间 ${shortDateTime(nextOpen)} 开启。`;
