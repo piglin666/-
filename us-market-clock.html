@@ -546,6 +546,177 @@
       text-shadow: 0 0 16px rgba(52, 211, 153, 0.26);
     }
 
+    .market-board {
+      margin-top: 18px;
+      border: 1px solid rgba(96, 165, 250, 0.22);
+      border-radius: var(--radius);
+      padding: clamp(18px, 3vw, 26px);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(96, 165, 250, 0.14), transparent 28rem),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.82), rgba(2, 6, 23, 0.74));
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .market-board.open {
+      border-color: rgba(45, 212, 191, 0.5);
+      box-shadow: 0 22px 70px rgba(45, 212, 191, 0.12), 0 22px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .market-board.closed {
+      border-color: rgba(251, 191, 36, 0.28);
+    }
+
+    .market-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .market-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .market-title-row h3 {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 28px);
+      line-height: 1.15;
+    }
+
+    .market-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.28);
+      color: #dbeafe;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .market-status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 14px rgba(251, 191, 36, 0.45);
+    }
+
+    .market-board.open .market-status::before {
+      background: var(--green);
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.68);
+    }
+
+    .market-clock {
+      margin: 0;
+      color: #f8fbff;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .market-copy {
+      margin: 12px 0 0;
+      color: #b8c7dd;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .market-side {
+      border: 1px solid rgba(148, 163, 184, 0.13);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: rgba(2, 6, 23, 0.24);
+      display: grid;
+      gap: 12px;
+    }
+
+    .market-side-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      padding-bottom: 12px;
+    }
+
+    .market-side-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .market-side-row small {
+      display: block;
+      color: var(--soft);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .market-side-row strong,
+    .market-side-row span {
+      color: #eaf2ff;
+      font-size: 14px;
+      font-weight: 760;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .korea-sessions {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .korea-card {
+      min-height: 132px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: rgba(15, 23, 42, 0.52);
+      transition: border-color 280ms ease, background 280ms ease, transform 280ms ease;
+    }
+
+    .korea-card.active {
+      transform: translateY(-3px);
+      border-color: rgba(45, 212, 191, 0.56);
+      background: rgba(13, 148, 136, 0.16);
+    }
+
+    .korea-card h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .korea-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .korea-count {
+      margin-top: 12px;
+      color: #dbeafe;
+      font-size: 15px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .korea-card.active .korea-count {
+      color: var(--green);
+    }
+
     .holiday-box {
       margin-top: 16px;
       border: 1px solid rgba(148, 163, 184, 0.13);
@@ -568,7 +739,9 @@
       .clock-chip { width: 100%; }
 
       .hero-grid,
-      .timeline {
+      .timeline,
+      .market-main,
+      .korea-sessions {
         grid-template-columns: 1fr;
       }
 
@@ -726,9 +899,73 @@
       </article>
     </section>
 
+    <div class="section-head">
+      <div>
+        <h2>韩国股市</h2>
+        <p class="subtitle">韩国交易所 KRX · 韩国时间与北京时间同步显示</p>
+      </div>
+      <div class="hint">韩国时间比北京时间快 1 小时</div>
+    </div>
+
+    <section class="market-board closed" id="koreaMarket" aria-live="polite">
+      <div class="market-main">
+        <div>
+          <div class="market-title-row">
+            <h3>韩股交易时钟</h3>
+            <span class="market-status" id="koreaStatus">初始化</span>
+          </div>
+          <p class="label" id="koreaLabel">正在校准韩国市场时间</p>
+          <p class="market-clock" id="koreaCountdown">--:--:--</p>
+          <p class="market-copy" id="koreaAssist">按韩国时间计算常规交易窗口，并自动换算为北京时间。</p>
+        </div>
+        <aside class="market-side">
+          <div class="market-side-row">
+            <div>
+              <small>韩国当地时间</small>
+              <strong id="koreaLocalTime">--</strong>
+            </div>
+            <span>首尔</span>
+          </div>
+          <div class="market-side-row">
+            <div>
+              <small>下一次开市</small>
+              <strong id="koreaNextOpen">--</strong>
+            </div>
+            <span>韩股</span>
+          </div>
+          <div class="market-side-row">
+            <div>
+              <small>当前阶段结束</small>
+              <strong id="koreaPhaseEnd">--</strong>
+            </div>
+            <span id="koreaPhaseRemain">--</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="korea-sessions">
+        <div class="korea-card" id="korea-card-pre">
+          <h4>盘前时段</h4>
+          <p>韩国时间 07:30 - 09:00<br>北京时间 06:30 - 08:00</p>
+          <div class="korea-count" id="korea-count-pre">--:--:--</div>
+        </div>
+        <div class="korea-card" id="korea-card-regular">
+          <h4>常规交易</h4>
+          <p>韩国时间 09:00 - 15:30<br>北京时间 08:00 - 14:30</p>
+          <div class="korea-count" id="korea-count-regular">--:--:--</div>
+        </div>
+        <div class="korea-card" id="korea-card-after">
+          <h4>盘后交易</h4>
+          <p>韩国时间 15:40 - 18:00<br>北京时间 14:40 - 17:00</p>
+          <div class="korea-count" id="korea-count-after">--:--:--</div>
+        </div>
+      </div>
+    </section>
+
     <div class="holiday-box">
-      <strong>2026 内置休市日：</strong>
+      <strong>美股 2026 内置休市日：</strong>
       01/01 元旦、01/19 马丁·路德·金纪念日、02/16 华盛顿诞辰日、04/03 耶稣受难日、05/25 阵亡将士纪念日、06/19 六月节、07/03 独立日补休、09/07 劳动节、11/26 感恩节、12/25 圣诞节。
+      韩股模块当前按 KRX 常规交易时段与周末休市计算。
     </div>
   </main>
 
@@ -753,6 +990,13 @@
       { id: "after", name: "盘后交易", short: "盘后", start: [4, 0], startOffset: 1, end: [8, 0], endOffset: 1 }
     ];
 
+    const KOREA_TZ = "Asia/Seoul";
+    const KOREA_SESSIONS = [
+      { id: "pre", name: "盘前时段", start: [7, 30], end: [9, 0] },
+      { id: "regular", name: "常规交易", start: [9, 0], end: [15, 30] },
+      { id: "after", name: "盘后交易", start: [15, 40], end: [18, 0] }
+    ];
+
     const $ = (id) => document.getElementById(id);
     const elements = {
       hero: $("hero"),
@@ -768,7 +1012,16 @@
       nextOpenText: $("nextOpenText"),
       phaseEndText: $("phaseEndText"),
       phaseRemainText: $("phaseRemainText"),
-      scrollHint: $("scrollHint")
+      scrollHint: $("scrollHint"),
+      koreaMarket: $("koreaMarket"),
+      koreaStatus: $("koreaStatus"),
+      koreaLabel: $("koreaLabel"),
+      koreaCountdown: $("koreaCountdown"),
+      koreaAssist: $("koreaAssist"),
+      koreaLocalTime: $("koreaLocalTime"),
+      koreaNextOpen: $("koreaNextOpen"),
+      koreaPhaseEnd: $("koreaPhaseEnd"),
+      koreaPhaseRemain: $("koreaPhaseRemain")
     };
 
     let lastFocus = "";
@@ -969,6 +1222,145 @@
       }
     }
 
+    function koreaParts(date = new Date()) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: KOREA_TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+        weekday: "short"
+      }).formatToParts(date).reduce((acc, part) => {
+        if (part.type !== "literal") acc[part.type] = part.value;
+        return acc;
+      }, {});
+      return {
+        y: Number(parts.year),
+        m: Number(parts.month),
+        d: Number(parts.day),
+        h: Number(parts.hour),
+        min: Number(parts.minute),
+        sec: Number(parts.second),
+        weekday: parts.weekday,
+        key: `${parts.year}-${parts.month}-${parts.day}`
+      };
+    }
+
+    function makeKoreaDate(key, hour = 0, minute = 0, offsetDays = 0) {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(Date.UTC(y, m - 1, d + offsetDays, hour - 9, minute, 0));
+    }
+
+    function koreaTimeText(date) {
+      const p = koreaParts(date);
+      return `${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.min)}:${pad(p.sec)}`;
+    }
+
+    function koreaDayName(date) {
+      return new Intl.DateTimeFormat("zh-CN", { timeZone: KOREA_TZ, weekday: "short" }).format(date);
+    }
+
+    function koreaShortDateTime(date) {
+      const p = koreaParts(date);
+      return `${p.m}/${p.d} ${pad(p.h)}:${pad(p.min)} (${koreaDayName(date)})`;
+    }
+
+    function koreaWeekdayIndex(key) {
+      return makeKoreaDate(key, 12).getUTCDay();
+    }
+
+    function isKoreaTradingDay(key) {
+      const day = koreaWeekdayIndex(key);
+      return day >= 1 && day <= 5;
+    }
+
+    function koreaSessionRange(tradingKey, session) {
+      return {
+        start: makeKoreaDate(tradingKey, session.start[0], session.start[1]),
+        end: makeKoreaDate(tradingKey, session.end[0], session.end[1])
+      };
+    }
+
+    function findKoreaActive(now) {
+      const key = koreaParts(now).key;
+      if (!isKoreaTradingDay(key)) return null;
+      for (const session of KOREA_SESSIONS) {
+        const range = koreaSessionRange(key, session);
+        if (now >= range.start && now < range.end) return { ...session, ...range, tradingKey: key };
+      }
+      return null;
+    }
+
+    function nextKoreaTradingKey(fromDate) {
+      let key = koreaParts(fromDate).key;
+      for (let i = 0; i < 370; i += 1) {
+        const open = makeKoreaDate(key, 7, 30);
+        if (isKoreaTradingDay(key) && open > fromDate) return key;
+        key = addDaysKey(key, 1);
+      }
+      return key;
+    }
+
+    function nextKoreaSessionStart(now, session) {
+      let key = koreaParts(now).key;
+      for (let i = 0; i < 370; i += 1) {
+        if (isKoreaTradingDay(key)) {
+          const start = koreaSessionRange(key, session).start;
+          if (start > now) return start;
+        }
+        key = addDaysKey(key, 1);
+      }
+      return null;
+    }
+
+    function updateKoreaCards(now, active) {
+      for (const session of KOREA_SESSIONS) {
+        const card = $(`korea-card-${session.id}`);
+        const count = $(`korea-count-${session.id}`);
+        const isActive = active && active.id === session.id;
+        card.classList.toggle("active", Boolean(isActive));
+        if (isActive) {
+          count.textContent = `剩 ${formatDuration(active.end - now, true)}`;
+        } else {
+          const start = nextKoreaSessionStart(now, session);
+          count.textContent = start ? `开 ${formatDuration(start - now, true)}` : "--:--:--";
+        }
+      }
+    }
+
+    function updateKoreaMarket(now) {
+      const active = findKoreaActive(now);
+      const nextKey = nextKoreaTradingKey(now);
+      const nextOpen = makeKoreaDate(nextKey, 7, 30);
+      elements.koreaLocalTime.textContent = koreaTimeText(now);
+      elements.koreaNextOpen.textContent = koreaShortDateTime(nextOpen);
+
+      if (active) {
+        elements.koreaMarket.classList.add("open");
+        elements.koreaMarket.classList.remove("closed");
+        elements.koreaStatus.textContent = "交易中";
+        elements.koreaLabel.textContent = `${active.name}正在进行，距离当前阶段结束`;
+        elements.koreaCountdown.textContent = formatDuration(active.end - now);
+        elements.koreaAssist.textContent = `${active.name}将在韩国时间 ${koreaShortDateTime(active.end)} 结束，对应北京时间 ${shortDateTime(active.end)}。`;
+        elements.koreaPhaseEnd.textContent = koreaShortDateTime(active.end);
+        elements.koreaPhaseRemain.textContent = formatDuration(active.end - now, true);
+      } else {
+        elements.koreaMarket.classList.add("closed");
+        elements.koreaMarket.classList.remove("open");
+        elements.koreaStatus.textContent = "休市中";
+        elements.koreaLabel.textContent = "距离下一次韩国股市开市";
+        elements.koreaCountdown.textContent = formatDuration(nextOpen - now);
+        elements.koreaAssist.textContent = `下一次韩股盘前时段将在韩国时间 ${koreaShortDateTime(nextOpen)} 开启，对应北京时间 ${shortDateTime(nextOpen)}。`;
+        elements.koreaPhaseEnd.textContent = "--";
+        elements.koreaPhaseRemain.textContent = "--";
+      }
+
+      updateKoreaCards(now, active);
+    }
+
     function update() {
       const now = new Date();
       const active = findActive(now);
@@ -1011,6 +1403,7 @@
       }
 
       updateCards(now, active);
+      updateKoreaMarket(now);
     }
 
     update();
